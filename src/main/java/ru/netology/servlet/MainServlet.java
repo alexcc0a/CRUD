@@ -1,5 +1,6 @@
 package ru.netology.servlet;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ru.netology.controller.PostController;
 import ru.netology.repository.PostRepository;
 import ru.netology.service.PostService;
@@ -15,22 +16,26 @@ public class MainServlet extends HttpServlet {
 
     @Override
     public void init() {
-        final var repository = new PostRepository();
-        final var service = new PostService(repository);
-        controller = new PostController(service);
+        // отдаём список пакетов, в которых нужно искать аннотированные классы
+        final var context = new AnnotationConfigApplicationContext("ru.netology");
+        // получаем по классу бина
+        controller = context.getBean(PostController.class);
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) {
+        // если деплоились в root context, то достаточно этого
         try {
             final var path = req.getRequestURI();
             final var method = req.getMethod();
 
+            // primitive routing
             if (method.equals("GET") && path.equals(pathApi)) {
                 controller.all(resp);
                 return;
             }
             if (method.equals("GET") && path.matches(pathApi + "/\\d+")) {
+                // easy way
                 final var id = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
                 controller.getById(id, resp);
                 return;
@@ -40,6 +45,7 @@ public class MainServlet extends HttpServlet {
                 return;
             }
             if (method.equals("DELETE") && path.matches(pathApi + "/\\d+")) {
+                // easy way
                 final var id = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
                 controller.removeById(id, resp);
                 return;

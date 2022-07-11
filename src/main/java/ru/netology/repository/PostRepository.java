@@ -1,5 +1,6 @@
 package ru.netology.repository;
 
+import org.springframework.stereotype.Repository;
 import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 
@@ -8,6 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+// Stub
+@Repository
 public class PostRepository {
 
     private Map<Long, Post> postsListMap = new ConcurrentHashMap<>();
@@ -15,6 +18,7 @@ public class PostRepository {
 
 
     public List<Post> all() {
+        // to convert map values to list
         return postsListMap.values().
                 stream().collect(Collectors.toCollection(ArrayList::new));
     }
@@ -39,6 +43,7 @@ public class PostRepository {
                 throw new NotFoundException("Post not saved {id:" + post.getId() + "}");
             }
         } else {
+            // post.getId() == 0
             long id = postCount.incrementAndGet();
             post.setId(id);
             postsListMap.put(id, post);
