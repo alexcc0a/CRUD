@@ -68,7 +68,5 @@ public class PostController {
             response.getWriter().print("Post not found {id:" + id + "}.Please check the id and try again.");
             e.printStackTrace();
         }
-
-
     }
 }
